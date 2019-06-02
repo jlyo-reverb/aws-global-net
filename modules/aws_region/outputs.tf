@@ -57,3 +57,8 @@ output "subnet_dmz_ipv6_cidr_block" {
   description = "VPC IPv6 CIDR block"
   value = "${aws_subnet.dmz.*.ipv6_cidr_block}"
 }
+
+output "route_tables" {
+  description = "Route tables in the VPC"
+  value = "${concat(aws_route_table.lan.*.id, [aws_route_table.dmz.id])}"
+}

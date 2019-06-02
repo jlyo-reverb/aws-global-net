@@ -6,6 +6,7 @@ tfplan
 distfiles/
 
 aws_regions.tf.json
+peering.tf.json
 providers.tf.json
 terraform.tfstate
 terraform.tfstate.backup

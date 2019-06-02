@@ -6,7 +6,7 @@ SUMS := terraform_$(VERSION)_SHA256SUMS
 URL := https://releases.hashicorp.com/terraform/$(VERSION)
 TF := distfiles/terraform-$(VERSION)
 
-GENSRC := aws_regions.tf.json providers.tf.json 
+GENSRC := aws_regions.tf.json providers.tf.json peering.tf.json
 TFSRC := $(shell find * -type f -a \! -path '*/.terraform/*' -a \( -name '*.tf' -o -name '*.tf.json' \) )
 TFSRC := $(TFSRC) $(GENSRC)
 
@@ -51,16 +51,20 @@ aws_regions.tf.json: regiondb.json scripts/aws_regions
 	scripts/aws_regions < "$<" > "$@.tmp"
 	mv -f -- "$@.tmp" "$@"
 
+peering.tf.json: regiondb.json scripts/peering
+	scripts/peering < "$<" > "$@.tmp"
+	mv -f -- "$@.tmp" "$@"
+
 .stamps/init: $(TF) $(TFSRC)
-	$(TF) init
+	./scripts/softlimit $(TF) init
 	mkdir -p .stamps && touch "$@"
 
 tfplan: .stamps/init $(TF)
-	$(TF) plan -out "$@.tmp"
+	./scripts/softlimit $(TF) plan -out "$@.tmp"
 	mv -f -- "$@.tmp" "$@"
 
 .stamps/apply: tfplan $(TF)
-	$(TF) apply "$<"
+	./scripts/softlimit $(TF) apply "$<"
 	touch "$@"
 
 clean:

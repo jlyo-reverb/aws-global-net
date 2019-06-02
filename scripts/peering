@@ -1,0 +1,53 @@
+#!/bin/sh
+set -eu
+IFS="$(printf \\n\\t)"
+
+product() {
+  set -- $(jq -r '.regions[] | select((.disable? // false) == false) | .region')
+  for src ; do
+    for dst ; do
+      [ "$src" != "$dst" ] && printf "%s\t%s\n" "$src" "$dst"
+    done
+  done
+}
+
+jq -sR '{
+  "module": [
+	  split("\n")
+  | map(split("\t")
+	| select((. | length) > 0))
+	| .[]
+  | {
+      ("peering-requester_" + .[0] + "_" + .[1]): {
+        "source": "./modules/peering-requester",
+        "providers": {
+          "aws": ("aws." + .[0]),
+        },
+        "vpc_id": ("${module.aws_region_" + .[0] + ".vpc_id}"),
+        "peer_vpc_id": ("${module.aws_region_" + .[1] + ".vpc_id}"),
+        "peer_region": (.[1]),
+        "destination_cidr_block": ("${module.aws_region_" + .[1] + ".vpc_cidr_block}"),
+        "route_tables": ("${module.aws_region_" + .[0] + ".route_tables}"),
+      }
+    },
+    {
+      ("peering-accepter_" + .[0] + "_" + .[1]): {
+        "source": "./modules/peering-accepter",
+        "providers": {
+          "aws": ("aws." + .[1]),
+        },
+        "connection_id": (
+          "${module.peering-requester_" + .[0] + "_" + .[1] + ".connection_id}"
+        ),
+        "destination_cidr_block": ("${module.aws_region_" + .[0] + ".vpc_cidr_block}"),
+        "route_tables": ("${module.aws_region_" + .[1] + ".route_tables}"),
+      }
+    }
+  ]
+}' <<EOF
+$(product |
+  sort -u |
+  awk "-F$(printf \\t)" '
+    seen[$1 ":" $2]++ + seen[$2 ":" $1]++ < 1 { print $0 }
+')
+EOF

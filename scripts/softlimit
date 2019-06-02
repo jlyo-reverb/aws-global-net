@@ -1,0 +1,10 @@
+#!/bin/sh
+stack="$((8192 * 1024))"
+rss="$((1024 * 1024 * 1024))"
+exec \
+softlimit \
+  -m "$rss" \
+  -l "$stack" \
+  -s "$stack" \
+  -r "$rss" \
+  -- "$@"
