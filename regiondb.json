@@ -1,0 +1,68 @@
+{
+  "regions": [
+    {
+      "region": "us-east-1",
+      "id": 0
+    },
+    {
+      "region": "us-east-2",
+      "id": 1
+    },
+    {
+      "region": "us-west-1",
+      "id": 2
+    },
+    {
+      "region": "us-west-2",
+      "id": 3
+    },
+    {
+      "region": "ap-northeast-1",
+      "id": 4
+    },
+    {
+      "region": "ap-northeast-2",
+      "id": 5
+    },
+    {
+      "region": "ap-southeast-1",
+      "id": 6
+    },
+    {
+      "region": "ap-southeast-2",
+      "id": 7
+    },
+    {
+      "region": "eu-west-1",
+      "id": 8
+    },
+    {
+      "region": "eu-west-2",
+      "id": 9
+    },
+    {
+      "region": "eu-west-3",
+      "id": 10
+    },
+    {
+      "region": "eu-central-1",
+      "id": 11
+    },
+    {
+      "region": "eu-north-1",
+      "id": 12
+    },
+    {
+      "region": "sa-east-1",
+      "id": 13
+    },
+    {
+      "region": "ap-south-1",
+      "id": 14
+    },
+    {
+      "region": "ca-central-1",
+      "id": 15
+    }
+  ]
+}
