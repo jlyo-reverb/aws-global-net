@@ -4,8 +4,8 @@ exec jq '
   "module": [
       .regions
     | .[]
-		| select((.disable? // false) == false)
-		| {
+    | select((.disable? // false) == false)
+    | {
       ("aws_region_" + .region): {
         "source": "./modules/aws_region",
         "providers": {

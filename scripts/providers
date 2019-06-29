@@ -2,16 +2,16 @@
 exec jq '
 {
   "provider": [
-	    .regions
-		| .[]
-		| select((.disable? // false) == false)
-		| .region
-		| {
-			 	"aws": {
-	   	    "version": "~> 2.0",
-		 	    "region": .,
-		 	    "alias": .
-		    }
+      .regions
+    | .[]
+    | select((.disable? // false) == false)
+    | .region
+    | {
+         "aws": {
+           "version": "~> 2.0",
+           "region": .,
+           "alias": .
+        }
      }
   ]
 }'

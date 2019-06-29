@@ -13,10 +13,10 @@ product() {
 
 jq -sR '{
   "module": [
-	  split("\n")
+    split("\n")
   | map(split("\t")
-	| select((. | length) > 0))
-	| .[]
+  | select((. | length) > 0))
+  | .[]
   | {
       ("peering-requester_" + .[0] + "_" + .[1]): {
         "source": "./modules/peering-requester",
