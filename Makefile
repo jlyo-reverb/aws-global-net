@@ -99,7 +99,7 @@ terraform.tfstate.backup.json: terraform.tfstate.backup $(TF) scripts/softlimit
 #
 clean:
 	-rm -rf .gnupg .stamps .terraform/modules
-	-rm -f tfplan $(GENSRC)
+	-rm -f tfplan $(GENSRC) tfplan.json terraform.tfstate.json terraform.tfstate.backup.json
 	-find * -name '*.tmp' -exec rm -f -- {} +
 
 distclean: clean
