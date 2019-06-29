@@ -24,7 +24,7 @@ init: .stamps/init
 plan: tfplan
 apply: .stamps/apply
 fmt: $(TF)
-	$(TF) fmt
+	$(TF) fmt -recursive -write=false -check -diff
 .PHONY: all init plan apply fmt
 
 #
