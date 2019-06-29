@@ -13,8 +13,9 @@ TF := distfiles/terraform-$(VERSION)
 # Terraform source files
 #
 GENSRC := aws_regions.tf.json providers.tf.json peering.tf.json
-TFSRC := $(shell find * -type f -a \! -path '*/.terraform/*' -a \( -name '*.tf' -o -name '*.tf.json' \) )
+TFSRC := $(shell find * -type f -a \( -name '*.tf' -o -name '*.tf.json' \) )
 TFSRC := $(TFSRC) $(GENSRC)
+PLANSRC := $(TFSRC) .terraform/modules/modules.json .terraform/plugins/$(OS)_$(ARCH)/lock.json
 
 #
 # User entry points
@@ -65,12 +66,14 @@ $(TF): distfiles/$(ZIP)
 #
 # Rules for running terraform
 #
-.stamps/init: $(TF) $(TFSRC) scripts/softlimit
+.stamps/init: $(TFSRC) $(TF) scripts/softlimit
 	./scripts/softlimit $(TF) init
 	mkdir -p .stamps
 	touch "$@"
+.terraform/modules/modules.json: .stamps/init
+.terraform/plugins/$(OS)_$(ARCH)/lock.json: .stamps/init
 
-tfplan: .stamps/init $(TF) scripts/softlimit
+tfplan: $(PLANSRC) $(TF) scripts/softlimit
 	./scripts/softlimit $(TF) plan -out "$@.tmp"
 	mv -f -- "$@.tmp" "$@"
 
