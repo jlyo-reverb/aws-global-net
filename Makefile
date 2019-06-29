@@ -23,8 +23,8 @@ all: plan
 init: .stamps/init
 plan: tfplan
 apply: .stamps/apply
-fmt: $(TF)
-	$(TF) fmt -recursive -write=false -check -diff
+fmt: $(TF) scripts/softlimit
+	./scripts/softlimit $(TF) fmt -recursive -write=false -check -diff
 .PHONY: all init plan apply fmt
 
 #
@@ -65,16 +65,16 @@ $(TF): distfiles/$(ZIP)
 #
 # Rules for running terraform
 #
-.stamps/init: $(TF) $(TFSRC)
+.stamps/init: $(TF) $(TFSRC) scripts/softlimit
 	./scripts/softlimit $(TF) init
 	mkdir -p .stamps
 	touch "$@"
 
-tfplan: .stamps/init $(TF)
+tfplan: .stamps/init $(TF) scripts/softlimit
 	./scripts/softlimit $(TF) plan -out "$@.tmp"
 	mv -f -- "$@.tmp" "$@"
 
-.stamps/apply: tfplan $(TF)
+.stamps/apply: tfplan $(TF) scripts/softlimit
 	./scripts/softlimit $(TF) apply "$<"
 	touch "$@"
 
