@@ -23,6 +23,7 @@ PLANSRC := $(TFSRC) .terraform/modules/modules.json .terraform/plugins/$(OS)_$(A
 all: plan
 init: .stamps/init
 plan: tfplan.json terraform.tfstate.json terraform.tfstate.backup.json
+apply: .stamps/apply
 fmt: $(TF) scripts/softlimit
 	./scripts/softlimit $(TF) fmt -recursive -write=false -check -diff
 .PHONY: all init plan apply fmt
