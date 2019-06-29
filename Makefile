@@ -84,6 +84,7 @@ tfplan: .stamps/init $(TF) scripts/softlimit
 clean:
 	-rm -rf .gnupg .stamps
 	-rm -f tfplan $(GENSRC)
+	-find * -name '*.tmp' -exec rm -f -- {} +
 
 distclean: clean
 	-rm -rf distfiles
