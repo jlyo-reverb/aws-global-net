@@ -1,0 +1,30 @@
+Dependencies: awk, curl, gnupg, jq, make, shell, git
+
+git-hooks/
+  install - replace .git/hooks with symlink to git-hooks/
+  pre-commit - run make fmt
+
+hashicorp.asc - Hashicorp's code signing key
+regiondb.json - region -> integer map
+
+Makefile - project building entry point
+terraform.tfvars.json - user customization
+main.tf - terraform
+variables.tf - terraform
+
+distfiles/ - downloaded files
+
+external/
+  region_ids - rewrite regiondb.json in a terraform external data source format
+
+modules/
+  aws_region/ - VPC and subnets for an AWS region
+  peering-accepter/ - VPC peering accepter
+  peering-requester/ - VPC peering requester
+
+scripts/
+  aws_delete-default-vpc.sh - removes default VPCs in all regions
+  softlimit - call soflimit with hardcoded values
+  aws_regions - generates aws_regions.tf.json from regiondb.json
+  peering - generates peering.tf.json from regiondb.json
+  providers - generates providers.tf.json from regiondb.json
