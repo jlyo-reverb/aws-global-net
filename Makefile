@@ -82,11 +82,11 @@ tfplan: .stamps/init $(TF) scripts/softlimit
 # Clean
 #
 clean:
-	-rm -rf .gnupg .stamps
+	-rm -rf .gnupg .stamps .terraform/modules
 	-rm -f tfplan $(GENSRC)
 	-find * -name '*.tmp' -exec rm -f -- {} +
 
 distclean: clean
-	-rm -rf distfiles
+	-rm -rf distfiles .terraform
 
 .PHONY: clean distclean
