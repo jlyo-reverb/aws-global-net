@@ -4,7 +4,7 @@ output "vpc_id" {
 }
 
 output "vpc_arn" {
-  description = "VPC ANR"
+  description = "VPC ARN"
   value       = "${aws_vpc.vpc.arn}"
 }
 
@@ -29,12 +29,12 @@ output "subnet_lan_arn" {
 }
 
 output "subnet_lan_cidr_block" {
-  description = "VPC CIDR block"
+  description = "LAN CIDR block"
   value       = "${aws_subnet.lan.*.cidr_block}"
 }
 
 output "subnet_lan_ipv6_cidr_block" {
-  description = "VPC IPv6 CIDR block"
+  description = "LAN IPv6 CIDR block"
   value       = "${aws_subnet.lan.*.ipv6_cidr_block}"
 }
 
@@ -49,12 +49,12 @@ output "subnet_dmz_arn" {
 }
 
 output "subnet_dmz_cidr_block" {
-  description = "VPC CIDR block"
+  description = "DMZ CIDR block"
   value       = "${aws_subnet.dmz.*.cidr_block}"
 }
 
 output "subnet_dmz_ipv6_cidr_block" {
-  description = "VPC IPv6 CIDR block"
+  description = "DMZ IPv6 CIDR block"
   value       = "${aws_subnet.dmz.*.ipv6_cidr_block}"
 }
 
