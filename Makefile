@@ -84,4 +84,8 @@ tfplan: .stamps/init $(TF) scripts/softlimit
 clean:
 	-rm -rf .gnupg .stamps
 	-rm -f tfplan $(GENSRC)
-.PHONY: clean
+
+distclean: clean
+	-rm -rf distfiles
+
+.PHONY: clean distclean
