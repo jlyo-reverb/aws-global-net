@@ -1,5 +1,16 @@
 Dependencies: awk, curl, gnupg, jq, make, shell, git
 
+First steps:
+  customize terraform.tfvars.json for your environment
+  run ./scripts/aws_delete-default-vpc.sh
+  optional: set "disable": true, for regions in regiondb.json
+  run make
+  run make apply
+
+Development:
+  run ./git-hooks/install
+  make fmt | git apply
+
 git-hooks/
   install - replace .git/hooks with symlink to git-hooks/
   pre-commit - run make fmt
