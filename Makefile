@@ -22,8 +22,7 @@ PLANSRC := $(TFSRC) .terraform/modules/modules.json .terraform/plugins/$(OS)_$(A
 #
 all: plan
 init: .stamps/init
-plan: tfplan
-apply: .stamps/apply
+plan: tfplan.json terraform.tfstate.json terraform.tfstate.backup.json
 fmt: $(TF) scripts/softlimit
 	./scripts/softlimit $(TF) fmt -recursive -write=false -check -diff
 .PHONY: all init plan apply fmt
@@ -75,6 +74,20 @@ $(TF): distfiles/$(ZIP)
 
 tfplan: $(PLANSRC) $(TF) scripts/softlimit
 	./scripts/softlimit $(TF) plan -out "$@.tmp"
+	mv -f -- "$@.tmp" "$@"
+terraform.tfstate: tfplan
+terraform.tfstate.backup: tfplan
+
+tfplan.json: tfplan $(TF) scripts/softlimit
+	./scripts/softlimit $(TF) plan -out "$@.tmp"
+	mv -f -- "$@.tmp" "$@"
+
+terraform.tfstate.json: terraform.tfstate $(TF) scripts/softlimit
+	./scripts/softlimit $(TF) show -no-color -json < "$<" | jq . > "$@.tmp"
+	mv -f -- "$@.tmp" "$@"
+
+terraform.tfstate.backup.json: terraform.tfstate.backup $(TF) scripts/softlimit
+	./scripts/softlimit $(TF) show -no-color -json < "$<" | jq . > "$@.tmp"
 	mv -f -- "$@.tmp" "$@"
 
 .stamps/apply: tfplan $(TF) scripts/softlimit
