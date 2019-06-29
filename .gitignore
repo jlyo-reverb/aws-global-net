@@ -10,3 +10,7 @@ peering.tf.json
 providers.tf.json
 terraform.tfstate
 terraform.tfstate.backup
+
+tfplan.json
+terraform.tfstate.json
+terraform.tfstate.backup.json
