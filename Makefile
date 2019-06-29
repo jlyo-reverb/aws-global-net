@@ -79,7 +79,7 @@ terraform.tfstate: tfplan
 terraform.tfstate.backup: tfplan
 
 tfplan.json: tfplan $(TF) scripts/softlimit
-	./scripts/softlimit $(TF) plan -out "$@.tmp"
+	./scripts/softlimit $(TF) show -no-color -json < "$<" | jq . > "$@.tmp"
 	mv -f -- "$@.tmp" "$@"
 
 terraform.tfstate.json: terraform.tfstate $(TF) scripts/softlimit
