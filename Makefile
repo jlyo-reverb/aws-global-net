@@ -1,3 +1,6 @@
+#
+# Constants
+#
 VERSION := 0.12.0
 OS := linux
 ARCH := amd64
@@ -6,18 +9,27 @@ SUMS := terraform_$(VERSION)_SHA256SUMS
 URL := https://releases.hashicorp.com/terraform/$(VERSION)
 TF := distfiles/terraform-$(VERSION)
 
+#
+# Terraform source files
+#
 GENSRC := aws_regions.tf.json providers.tf.json peering.tf.json
 TFSRC := $(shell find * -type f -a \! -path '*/.terraform/*' -a \( -name '*.tf' -o -name '*.tf.json' \) )
 TFSRC := $(TFSRC) $(GENSRC)
 
+#
+# User entry points
+#
 all: plan
 init: .stamps/init
 plan: tfplan
 apply: .stamps/apply
-fmt:
+fmt: $(TF)
 	$(TF) fmt
 .PHONY: all init plan apply fmt
 
+#
+# Rules for downloading and verifying the terraform binary
+#
 distfiles/$(SUMS).sig:
 	mkdir -p distfiles 
 	curl -o "$@.tmp" "$(URL)/$(SUMS).sig"
@@ -43,21 +55,20 @@ $(TF): distfiles/$(ZIP)
 	touch distfiles/terraform
 	mv -f distfiles/terraform "$@"
 
-providers.tf.json: regiondb.json scripts/providers
-	scripts/providers < "$<" > "$@.tmp"
+#
+# Rules for generating *.tf.json, using scripts/*
+#
+%.tf.json: scripts/% regiondb.json
+	"$<" < regiondb.json > "$@.tmp"
 	mv -f -- "$@.tmp" "$@"
 
-aws_regions.tf.json: regiondb.json scripts/aws_regions
-	scripts/aws_regions < "$<" > "$@.tmp"
-	mv -f -- "$@.tmp" "$@"
-
-peering.tf.json: regiondb.json scripts/peering
-	scripts/peering < "$<" > "$@.tmp"
-	mv -f -- "$@.tmp" "$@"
-
+#
+# Rules for running terraform
+#
 .stamps/init: $(TF) $(TFSRC)
 	./scripts/softlimit $(TF) init
-	mkdir -p .stamps && touch "$@"
+	mkdir -p .stamps
+	touch "$@"
 
 tfplan: .stamps/init $(TF)
 	./scripts/softlimit $(TF) plan -out "$@.tmp"
@@ -67,6 +78,9 @@ tfplan: .stamps/init $(TF)
 	./scripts/softlimit $(TF) apply "$<"
 	touch "$@"
 
+#
+# Clean
+#
 clean:
 	-rm -rf .gnupg .stamps
 	-rm -f tfplan $(GENSRC)
