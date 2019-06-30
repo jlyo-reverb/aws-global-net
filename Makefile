@@ -92,7 +92,9 @@ terraform.tfstate.backup.json: terraform.tfstate.backup $(TF) scripts/softlimit
 	mv -f -- "$@.tmp" "$@"
 
 .stamps/apply: tfplan $(TF) scripts/softlimit
-	./scripts/softlimit $(TF) apply -no-color "$<"
+	# https://github.com/hashicorp/terraform/issues/21330
+	env AWS_DEFAULT_REGION=us-east-2 \
+		./scripts/softlimit $(TF) apply -no-color "$<"
 	touch "$@"
 
 #
