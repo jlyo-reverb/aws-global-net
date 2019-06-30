@@ -25,7 +25,7 @@ init: .stamps/init
 plan: tfplan.json terraform.tfstate.json terraform.tfstate.backup.json
 apply: .stamps/apply
 fmt: $(TF) scripts/softlimit
-	./scripts/softlimit $(TF) fmt -recursive -write=false -check -diff
+	./scripts/softlimit $(TF) fmt -no-color -recursive -write=false -check -diff
 .PHONY: all init plan apply fmt
 
 #
@@ -67,14 +67,14 @@ $(TF): distfiles/$(ZIP)
 # Rules for running terraform
 #
 .stamps/init: $(TFSRC) $(TF) scripts/softlimit
-	./scripts/softlimit $(TF) init
+	./scripts/softlimit $(TF) init -no-color
 	mkdir -p .stamps
 	touch "$@"
 .terraform/modules/modules.json: .stamps/init
 .terraform/plugins/$(OS)_$(ARCH)/lock.json: .stamps/init
 
 tfplan: $(PLANSRC) $(TF) scripts/softlimit
-	./scripts/softlimit $(TF) plan -out "$@.tmp"
+	./scripts/softlimit $(TF) plan -no-color -out "$@.tmp"
 	mv -f -- "$@.tmp" "$@"
 terraform.tfstate: tfplan
 terraform.tfstate.backup: tfplan
@@ -92,7 +92,7 @@ terraform.tfstate.backup.json: terraform.tfstate.backup $(TF) scripts/softlimit
 	mv -f -- "$@.tmp" "$@"
 
 .stamps/apply: tfplan $(TF) scripts/softlimit
-	./scripts/softlimit $(TF) apply "$<"
+	./scripts/softlimit $(TF) apply -no-color "$<"
 	touch "$@"
 
 #
