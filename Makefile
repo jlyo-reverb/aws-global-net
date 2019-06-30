@@ -17,6 +17,10 @@ TFSRC := $(shell find * -type f -a \( -name '*.tf' -o -name '*.tf.json' \) )
 TFSRC := $(TFSRC) $(GENSRC)
 PLANSRC := $(TFSRC) .terraform/modules/modules.json .terraform/plugins/$(OS)_$(ARCH)/lock.json
 
+# release tarball sources
+RELSRC := external hashicorp.asc main.tf Makefile modules README regiondb.json scripts terraform.tfvars.json variables.tf
+RELSRC := $(shell find $(RELSRC) \! -type d)
+
 #
 # User entry points
 #
@@ -24,9 +28,10 @@ all: plan
 init: .stamps/init
 plan: tfplan.json terraform.tfstate.json terraform.tfstate.backup.json
 apply: .stamps/apply
+release: aws-global-net.tar.gz
 fmt: $(TF) scripts/softlimit
 	./scripts/softlimit $(TF) fmt -no-color -recursive -write=false -check -diff
-.PHONY: all init plan apply fmt
+.PHONY: all init plan apply release fmt
 
 #
 # Rules for downloading and verifying the terraform binary
@@ -97,12 +102,16 @@ terraform.tfstate.backup.json: terraform.tfstate.backup $(TF) scripts/softlimit
 		./scripts/softlimit $(TF) apply -no-color "$<"
 	touch "$@"
 
+aws-global-net.tar.gz: $(RELSRC)
+	git archive --prefix aws-global-net/ HEAD -- $(RELSRC) | gzip -n9c > "$@.tmp"
+	mv -f -- "$@.tmp" "$@"
+
 #
 # Clean
 #
 clean:
 	-rm -rf .gnupg .stamps .terraform/modules
-	-rm -f tfplan $(GENSRC) tfplan.json terraform.tfstate.json terraform.tfstate.backup.json
+	-rm -f tfplan $(GENSRC) tfplan.json terraform.tfstate.json terraform.tfstate.backup.json aws-global-net.tar.gz
 	-find * -name '*.tmp' -exec rm -f -- {} +
 
 distclean: clean
