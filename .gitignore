@@ -12,6 +12,7 @@ terraform.tfstate
 terraform.tfstate.backup
 
 tfplan.json
+output.json
 terraform.tfstate.json
 terraform.tfstate.backup.json
 

@@ -27,7 +27,7 @@ RELSRC := $(shell find $(RELSRC) \! -type d)
 all: plan
 init: .stamps/init
 plan: tfplan.json terraform.tfstate.json terraform.tfstate.backup.json
-apply: .stamps/apply
+apply: .stamps/apply output.json
 release: aws-global-net.tar.gz
 fmt: $(TF) scripts/softlimit
 	./scripts/softlimit $(TF) fmt -no-color -recursive -write=false -check -diff
@@ -103,6 +103,10 @@ terraform.tfstate.backup.json: terraform.tfstate.backup $(TF) scripts/softlimit
 		./scripts/softlimit $(TF) apply -no-color "$<"
 	touch "$@"
 
+output.json: .stamps/apply $(TF) scripts/softlimit
+	./scripts/softlimit $(TF) output -json > "$@.tmp"
+	mv -f -- "$@.tmp" "$@"
+
 aws-global-net.tar.gz: $(RELSRC)
 	git archive --prefix aws-global-net/ HEAD -- $(RELSRC) | gzip -n9c > "$@.tmp"
 	mv -f -- "$@.tmp" "$@"
@@ -112,7 +116,7 @@ aws-global-net.tar.gz: $(RELSRC)
 #
 clean:
 	-rm -rf .gnupg .stamps .terraform/modules
-	-rm -f tfplan $(GENSRC) tfplan.json terraform.tfstate.json terraform.tfstate.backup.json aws-global-net.tar.gz
+	-rm -f tfplan $(GENSRC) tfplan.json terraform.tfstate.json terraform.tfstate.backup.json aws-global-net.tar.gz output.json
 	-find * -name '*.tmp' -exec rm -f -- {} +
 
 distclean: clean
