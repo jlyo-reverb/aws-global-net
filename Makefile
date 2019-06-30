@@ -1,7 +1,7 @@
 #
 # Constants
 #
-VERSION := 0.12.0
+VERSION := 0.12.3
 OS := linux
 ARCH := amd64
 ZIP := terraform_$(VERSION)_$(OS)_$(ARCH).zip
