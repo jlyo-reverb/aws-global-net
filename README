@@ -1,4 +1,4 @@
-Dependencies: awk, curl, gnupg, jq, make, shell, git
+Dependencies: awk, curl, gnupg, jq, make, shell, git, terraform
 
 First steps:
   customize terraform.tfvars.json for your environment
