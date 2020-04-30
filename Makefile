@@ -43,8 +43,12 @@ distfiles/$(SUMS).sig:
 
 distfiles/$(SUMS): distfiles/$(SUMS).sig hashicorp.asc
 	curl -o "$@.tmp" "$(URL)/$(SUMS)"
-	gpg --no-use-agent --homedir .gnupg --import hashicorp.asc
-	gpg --no-use-agent --homedir .gnupg --trust-model always --verify "$<" "$@.tmp"
+	set -eux \
+	  && tmp="$$(mktemp -d)" \
+	  && trap 'rm -rf -- "$$tmp"' EXIT \
+	  && gpg --homedir "$$tmp" --import hashicorp.asc \
+	  && gpg --homedir "$$tmp" --trust-model always --verify "$<" "$@.tmp"
+	  && exec rm -rf -- "$$tmp"
 	mv -f -- "$@.tmp" "$@"
 
 distfiles/$(SUMS)_$(OS)_$(ARCH): distfiles/$(SUMS)
