@@ -47,7 +47,7 @@ distfiles/$(SUMS): distfiles/$(SUMS).sig hashicorp.asc
 	  && tmp="$$(mktemp -d)" \
 	  && trap 'rm -rf -- "$$tmp"' EXIT \
 	  && gpg --homedir "$$tmp" --import hashicorp.asc \
-	  && gpg --homedir "$$tmp" --trust-model always --verify "$<" "$@.tmp"
+	  && gpg --homedir "$$tmp" --trust-model always --verify "$<" "$@.tmp" \
 	  && exec rm -rf -- "$$tmp"
 	mv -f -- "$@.tmp" "$@"
 
