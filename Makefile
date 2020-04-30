@@ -2,7 +2,7 @@
 # Constants
 #
 VERSION := 0.12.24
-OS := linux
+OS := $(shell uname -s | tr A-Z a-z)
 ARCH := amd64
 ZIP := terraform_$(VERSION)_$(OS)_$(ARCH).zip
 SUMS := terraform_$(VERSION)_SHA256SUMS
